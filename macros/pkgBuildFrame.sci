@@ -10,7 +10,7 @@ function pkgBuildFrame(data)
   'user_data',data,..
   'layout','gridbag')
   
-  frame_constraints = createConstraints('gridbag',[1,1,1,1],[0,1],'both','center',[0,0],[600,700])
+  frame_constraints = createConstraints('gridbag',[1,1,1,1],[1,1],'both','center',[0,0],[600,700])
   fset = uicontrol(fig_handle,'style','frame','constraints',frame_constraints,'layout','gridbag')
   
   tab = uicontrol(fset,'style','tab')
@@ -21,7 +21,7 @@ function pkgBuildFrame(data)
   pkgBuildSettings(fbase)
   pkgBuildOptSettings(fadv)
   
-  frame_constraints = createConstraints('gridbag',[1,2,1,1],[0,0],'both','center',[0,0],[600,700])
+  frame_constraints = createConstraints('gridbag',[1,2,1,1],[1,1],'both','center',[0,0],[600,700])
   fbut = uicontrol(fig_handle,'style','frame','constraints',frame_constraints,'layout','gridbag')
   pkgAddControl(fbut,'pushbutton','Save',[],[1,1],[],'pkgSave',[])
   pkgAddControl(fbut,'pushbutton','Create',[],[2,1],[2,1],'pkgCreate',[])
@@ -85,7 +85,7 @@ function uicontrol_handle=pkgAddControl(frame_handle,style,text,tag,uipos,uisize
     weight = [0,1]
     alignment = 'right'
   case 'edit'
-    pkgAddControl(frame_handle,'text',text,[],uipos,[1,1],'',[])
+    pkgAddControl(frame_handle,'text',text,'',uipos,[1,1],'')
     f = pkgGetRootHandle(frame_handle)
     data = f.user_data
     text = data(tag)

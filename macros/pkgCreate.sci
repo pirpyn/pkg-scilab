@@ -134,7 +134,7 @@ function pkgCreateHelp(data)
   '  langdirs = dir(path);'
   '  langdirs = langdirs.name(langdirs.isdir);'
   ''
-  '  for l = 1:size(langdirs, "*")'
+  '  for l = 1:size(langdirs, ""*"")'
   '      masterfile = fullpath(path + filesep() + langdirs(l) + ""/master_help.xml"");'
   '      mdelete(masterfile);'
   ''
