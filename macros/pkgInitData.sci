@@ -3,18 +3,24 @@ function data=pkgInitData()
   data.Toolbox = 'foo'
   data.Title = 'Dummy Toolbox'
   data.Summary = 'A dummy toolbox'
+  data.Version = '1.0'
+  data.Author = 'John Smith'
+  data.Maintainer = data.Author
+  data.Category = ''
+  data.Entity = ''
+  data.WebSite =''
+  data.License = 'BSD'
+  data.LicensePath =''
+  data.ScilabVersion ='>= 5.4'
+  data.Depends =''
+  dte = getdate()
+  data.Date = strsubst(strcat(string(dte([6,2,1]))+'-'),'/\-$/','','r')
   data.Description =[..
-  'Put all needed information here.'
+  'Put all information here. '
   'This can take several lines'
   ]
-  data.Author = 'John Smith'
   data.Mail = 'john@smith'
-  data.License = 'CeCiLL'
-  data.LicensePath =''
   data.HelpLang = 'fr_FR'
-  data.Version = '1.0'
-  data.ScilabVersion ='>= 5.4'
   data.Path = TMPDIR+filesep()+data.Toolbox
-  data.Category = ''
-  data.Maintainer = ''
+
 endfunction

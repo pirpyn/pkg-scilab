@@ -1,8 +1,7 @@
 function pkg(varargin)
   data = pkgInitData()
   
-  figure_handle=pkgInitFrame(data)
+  figure_handle=pkgBuildFrame(data)
   
-  pkgBuildFrame(figure_handle,data)
   figure_handle.visible='on'
 endfunction

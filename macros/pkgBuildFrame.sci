@@ -8,23 +8,28 @@ function pkgBuildFrame(data)
   'infobar_visible','off',..
   'visible','on',..
   'user_data',data,..
-  'layout','grid')
+  'layout','gridbag')
   
-  f = fig_handle
-  tab = uicontrol(f,'style','tab')
-  fbase = uicontrol(tab,'style','frame','layout','gridbag','String','Basic')
+  frame_constraints = createConstraints('gridbag',[1,1,1,1],[0,1],'both','center',[0,0],[600,700])
+  fset = uicontrol(fig_handle,'style','frame','constraints',frame_constraints,'layout','gridbag')
+  
+  tab = uicontrol(fset,'style','tab')
+  // order of tabs and order of declaration are opposite because fig.children(1) is the last uicontrol added
+  fadv = uicontrol(tab,'style','frame','layout','gridbag','String','Optionnal Settings')
+  fbase = uicontrol(tab,'style','frame','layout','gridbag','String','Basic Settings')
+  
   pkgBuildSettings(fbase)
-  fadv = uicontrol(tab,'style','frame','layout','gridbag','String','Optionnal')
   pkgBuildOptSettings(fadv)
   
-  //pkgAddControl(f,'pushbutton','Save',[],[1,15],[],'pkgSave',[])
-  //pkgAddControl(f,'pushbutton','Create',[],[2,15],[2,1],'pkgCreate',[])
-  //h=pkgAddControl(f,'pushbutton','Install',[],[4,15],[],'pkgInstall',[])
-  //h.enable='off'
+  frame_constraints = createConstraints('gridbag',[1,2,1,1],[0,0],'both','center',[0,0],[600,700])
+  fbut = uicontrol(fig_handle,'style','frame','constraints',frame_constraints,'layout','gridbag')
+  pkgAddControl(fbut,'pushbutton','Save',[],[1,1],[],'pkgSave',[])
+  pkgAddControl(fbut,'pushbutton','Create',[],[2,1],[2,1],'pkgCreate',[])
+  h=pkgAddControl(fbut,'pushbutton','Install',[],[4,1],[],'pkgInstall',[])
+  h.enable='off'
 endfunction
 
 function pkgBuildSettings(f)
-
   pkgAddControl(f,'edit','Toolbox Name','Toolbox',[1,1],[],[],[])
   pkgAddControl(f,'edit','Toolbox Title','Title',[1,2],[],[],[])
   pkgAddControl(f,'edit',[],'Summary',[1,3],[],[],[])
