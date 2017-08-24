@@ -5,6 +5,7 @@ function [child,st]=pkgFindObj(tag,parent)
     parent = pkgGetRootHandle(gcbo)
   end
   st = %f
+
   child=parent
   if parent.children == [] then
     if parent.type == 'uicontrol' then
@@ -14,9 +15,8 @@ function [child,st]=pkgFindObj(tag,parent)
     end
   else
     for i=1:size(parent.children,'*')
-      [child,st]=pkgFindObj(tag,parent.children(i))
-      if st then 
-        [child,st]=return(child,st);
+      if ~st then
+       [child,st]=pkgFindObj(tag,parent.children(i))
       end
     end
   end
