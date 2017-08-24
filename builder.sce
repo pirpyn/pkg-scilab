@@ -34,11 +34,18 @@ function main_builder()
 
     // Action
     // =============================================================================
-
-    tbx_builder_macros(toolbox_dir);
-    tbx_builder_help(toolbox_dir);
-    tbx_build_loader(toolbox_dir);
-    tbx_build_cleaner(toolbox_dir);
+    
+    if v(1) > 6 then // scilab >= 6.0.0
+      tbx_builder_macros(toolbox_dir);
+      tbx_builder_help(toolbox_dir);
+      tbx_build_loader(toolbox_dir);
+      tbx_build_cleaner(toolbox_dir);
+    else // scilab  <= 5.5.1 and 
+      tbx_builder_macros(toolbox_dir);
+      tbx_builder_help(toolbox_dir);
+      tbx_build_loader(TOOLBOX_NAME,toolbox_dir);
+      tbx_build_cleaner(TOOLBOX_NAME,toolbox_dir);
+    end
 endfunction
 // =============================================================================
 main_builder();

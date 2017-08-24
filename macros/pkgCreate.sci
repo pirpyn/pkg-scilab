@@ -1,36 +1,45 @@
-function pkgCreate()
+function pkgCreate(data)
   f = pkgGetRootHandle(gcbo)
   data = f.user_data
+  settings = struct('erase',%t)
+  pkgCreateDir(data.OverWrite,data.Path)
+  pkgCreateDir(data.OverWrite,data.Path+filesep()+data.Version)
 
-  pkgCreateDir(data.Path)
-  pkgCreateDir(data.Path+filesep()+data.Version)
   pkgCreateBuilder(data)
   pkgCreateEtc(data)
   pkgCreateHelp(data)
   pkgCreateMacros(data)
-
   pkgCreateDESCRIPTION(data)
   pkgCreateLicense(data)
+
+  pkgDisplayInfo('Successfully generated the toolbox at '+data.Path,[0,0.7,0])
   
-  f.children(1).children(1).enable='on'
-  pkgShowToolbox(data.Path+filesep()+data.Version)
+  if data.OpenToolbox
+    pkgShowToolbox(data.Path+filesep()+data.Version)
+  end
+  btn=pkgFindObj('install_tag')
+  btn.enable='on'
 endfunction
 
-function st=pkgCreateDir(path)
-  if ~isdir(data.Path)
-      st = createdir(path)
+function st=pkgCreateDir(OverWrite,path)
+  st = %t
+  if ~isdir(path)
+    st = createdir(path)
   else
-    btn = messagebox(['There is already something at';path],'Warning','warning',['Abort','Erase it'],'modal')
-    if btn == 2 then
-      st = %t
-    else
-      st = %f
-      error('error: pkgCreateDir: dir not empty at '+path')
+    if ~OverWrite
+      btn = messagebox(['There is already something at';path],'Warning','warning',['Abort','Overwrite'],'modal')
+      if btn <> 2 then
+        st = %f
+        errmsg='error: pkgCreateDir: dir not empty at '+path
+        pkgDisplayInfo(errmsg,[0.7,0,0])
+        error(errmsg)
+      end
     end
   end
 endfunction
 
 function pkgCreateBuilder(data)
+  
   builder_file=[..
   pkgHeader(data);..
   'mode(-1);'
@@ -67,8 +76,13 @@ function pkgCreateBuilder(data)
   ''
   '    tbx_builder_macros(toolbox_dir);'
   '    tbx_builder_help(toolbox_dir);'
-  '    tbx_build_loader(TOOLBOX_NAME, toolbox_dir);'
-  '    tbx_build_cleaner(TOOLBOX_NAME, toolbox_dir);'
+  '  if v(1) > 6 then // scilab >= 6.0.0'
+  '    tbx_build_loader(toolbox_dir);'
+  '    tbx_build_cleaner(toolbox_dir);'
+  '  else // scilab  <= 5.5.1 and '
+  '    tbx_build_loader(TOOLBOX_NAME,toolbox_dir);'
+  '    tbx_build_cleaner(TOOLBOX_NAME,toolbox_dir);'
+  '  end'
   'endfunction'
   '// ============================================================================='
   'main_builder();'
@@ -82,7 +96,7 @@ endfunction
 
 function pkgCreateEtc(data)
   s = filesep();
-  pkgCreateDir(data.Path+filesep()+data.Version+s+'etc')
+  pkgCreateDir(data.OverWrite,data.Path+filesep()+data.Version+s+'etc')
 
   start_file = [..
   pkgHeader(data);..
@@ -165,7 +179,7 @@ function pkgCreateHelp(data)
   ''
   ]
 
-  pkgCreateDir(data.Path+filesep()+data.Version+s+'help')
+  pkgCreateDir(data.OverWrite,data.Path+filesep()+data.Version+s+'help')
   mputl(builder_help_file,data.Path+filesep()+data.Version+s+'help'+s+'builder_help.sce')
   mputl(cleaner_help_file,data.Path+filesep()+data.Version+s+'help'+s+'cleaner_help.sce')
 
@@ -174,7 +188,7 @@ function pkgCreateHelp(data)
   'tbx_build_help(TOOLBOX_TITLE,get_absolute_file_path(''build_help.sce''));'
   ]
 
-  pkgCreateDir(data.Path+filesep()+data.Version+s+'help'+s+data.HelpLang)
+  pkgCreateDir(data.OverWrite,data.Path+filesep()+data.Version+s+'help'+s+data.HelpLang)
   mputl(build_help_file,data.Path+filesep()+data.Version+s+'help'+s+data.HelpLang+s+'build_help.sce')
 endfunction
 
@@ -212,6 +226,7 @@ function pkgCreateMacros(data)
   'clear cleanmacros; // remove cleanmacros on stack'
   ''
   ]
+  
   macro_file=[..
   'function foo()'
   '// A dummy function'
@@ -224,11 +239,13 @@ function pkgCreateMacros(data)
   'endfunction'
   ''
   ]
-  
-  pkgCreateDir(data.Path+filesep()+data.Version+s+'macros')
+
+  pkgCreateDir(data.OverWrite,data.Path+filesep()+data.Version+s+'macros')
   mputl(buildmacros_file,data.Path+filesep()+data.Version+s+'macros'+s+'buildmacros.sce')
   mputl(cleanmacros_file,data.Path+filesep()+data.Version+s+'macros'+s+'cleanmacros.sce')
   mputl(macro_file,data.Path+filesep()+data.Version+s+'macros'+s+'foo.sci')
+
+  pkgAddMacros(data)
 endfunction
 
 function pkgCreateDESCRIPTION(data)
@@ -248,7 +265,7 @@ function pkgCreateDESCRIPTION(data)
   'Maintainer: '+data.Maintainer+' <'+data.Mail+'>'
   ''
   'Category: '+data.Category(1)
-  ' '+data.Category(2:$)
+  ' '+matrix(data.Category(2:$),-1,1)
   ''
   'Entity: '+data.Entity
   ''
@@ -264,7 +281,7 @@ function pkgCreateDESCRIPTION(data)
   'Date: '+data.Date
   ''
   'Description: '+data.Description(1)
-  '  '+data.Description(2:$)
+  '  '+matrix(data.Description(2:$),-1,1)
   ''
   ]
 
@@ -272,6 +289,7 @@ function pkgCreateDESCRIPTION(data)
 endfunction
 
 function pkgCreateLicense(data)
+  
   s = filesep()
 
   if data.LicensePath <> '' then
@@ -297,7 +315,7 @@ function pkgCreateLicense(data)
     'AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL '
     'THE REGENTS AND CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,'
     'SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,'
-    'PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;'
+    'PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, data, OR PROFITS;'
     'OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,'
     'WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE '
     'OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF '

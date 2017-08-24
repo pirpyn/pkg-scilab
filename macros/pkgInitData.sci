@@ -1,11 +1,11 @@
-function data=pkgInitData()
+function value=pkgInitData(key)
   data = struct()
   data.Toolbox = 'foo'
-  data.Title = 'Dummy Toolbox'
-  data.Summary = 'A dummy toolbox'
+  data.Title = 'the Foo toolbox'
+  data.Summary = 'A dummy toolbox automatically generated'
   data.Version = '1.0'
   data.Author = 'John Smith'
-  data.Maintainer = data.Author
+  data.Maintainer = ''
   data.Category = ''
   data.Entity = ''
   data.WebSite =''
@@ -14,13 +14,14 @@ function data=pkgInitData()
   data.ScilabVersion ='>= 5.4'
   data.Depends =''
   dte = getdate()
-  data.Date = strsubst(strcat(string(dte([6,2,1]))+'-'),'/\-$/','','r')
+  data.Date = msprintf('%02d-%02d-%4d',dte(6),dte(2),dte(1))
   data.Description =[..
   'Put all information here. '
   'This can take several lines'
   ]
-  data.Mail = 'john@smith'
+  data.Mail = ''
   data.HelpLang = 'fr_FR'
   data.Path = TMPDIR+filesep()+data.Toolbox
-
+  data.MacrosPath=''
+  value = data(key)
 endfunction

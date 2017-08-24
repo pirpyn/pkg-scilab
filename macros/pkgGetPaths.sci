@@ -4,13 +4,10 @@ function pkgGetPaths(mask,titl,multifiles)
   elseif  mask =='%dir'
     paths = uigetdir(home,titl)
   else
-    paths = uigetfile(mask,home,titl,multifiles)
+    paths = matrix(uigetfile(mask,home,titl,multifiles),-1,1)
   end
   
-
-  fig=pkgGetRootHandle(gcbo)
   tag = gcbo.user_data
-  fig.user_data(tag) = paths
-  ui_h=get(tag)
-  ui_h.String = paths
+  ui = pkgFindObj(tag)
+  ui.String = paths
 endfunction

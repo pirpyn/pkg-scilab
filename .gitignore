@@ -6,3 +6,4 @@ loader.sce
 unloader.sce
 help/*/scilab_*
 help/*/master_help.xml
+cleaner.sce
