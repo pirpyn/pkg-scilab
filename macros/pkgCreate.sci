@@ -2,6 +2,7 @@ function pkgCreate(data)
   f = pkgGetRootHandle(gcbo)
   data = f.user_data
   settings = struct('erase',%t)
+  data.Path = data.Path + filesep() + data.Toolbox
   pkgCreateDir(data.OverWrite,data.Path)
   pkgCreateDir(data.OverWrite,data.Path+filesep()+data.Version)
 
@@ -262,7 +263,7 @@ function pkgCreateDESCRIPTION(data)
   ''
   'Author: '+data.Author
   ''
-  'Maintainer: '+data.Maintainer+' <'+data.Mail+'>'
+  'Maintainer: '+data.Maintainer+' '+data.Mail
   ''
   'Category: '+data.Category(1)
   ' '+matrix(data.Category(2:$),-1,1)

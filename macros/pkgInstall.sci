@@ -1,3 +1,4 @@
-function pkgInstall(varargin)
+function pkgInstall()
+  f = pkgGetRootHandle(gcbo)
   
 endfunction

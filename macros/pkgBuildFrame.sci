@@ -10,26 +10,26 @@ function fig_handle=pkgBuildFrame()
   'visible','off',..
   'layout','gridbag')
 
-  setting_frame = uicontrol(fig_handle,'style','frame','layout','gridbag',..
-  'constraints',createConstraints('gridbag',[1,2,1,1],[0,1],'vertical','lower_left',[0,0],[-1,-1]))
-  macro_frame   = uicontrol(fig_handle,'style','frame','layout','gridbag',..
-  'constraints',createConstraints('gridbag',[2,2,1,1],[1,1],'both','lower_right'),'layout','gridbag')
-  info_frame    = uicontrol(fig_handle,'style','frame','layout','gridbag',..
-  'constraints',createConstraints('gridbag',[1,1,2,1],[1,0],'horizontal','upper_right'))
-  bottom_frame  = uicontrol(fig_handle,'style','frame','layout','gridbag',....
-  'constraints',createConstraints('gridbag',[1,4,2,1],[0,0],'both','lower',[0,0],[100,60]))
+  main_frame = uicontrol(fig_handle,'style','frame','layout','gridbag','scrollable','on',..
+  'constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'both','center',[0,0],[-1,600]))
+  setting_frame = uicontrol(main_frame,'style','frame','layout','gridbag',..
+  'constraints',createConstraints('gridbag',[1,2,2,1],[0,1],'both','lower_left'))
+  info_frame    = uicontrol(main_frame,'style','frame','layout','gridbag',..
+  'constraints',createConstraints('gridbag',[1,1,2,1],[1,0],'horizontal','upper_right',[-1,50]))
+  bottom_frame  = uicontrol(main_frame,'style','frame','layout','gridbag',....
+  'constraints',createConstraints('gridbag',[1,4,2,1],[0,0],'both','lower',[0,0],[-1,60]))
 
   //  defining the tabs
-  setting_tabs = uicontrol(setting_frame,'style','tab','constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'both','center'))
-  macro_tabs   = uicontrol(macro_frame,'style','tab','constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'both','center'))
+  setting_tabs = uicontrol(setting_frame,'style','tab','constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'horizontal','upper_left'))
+  //macro_tabs   = uicontrol(macro_frame,'style','tab','constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'both','center'))
   info_tabs    = uicontrol(info_frame,'style','tab','constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'both','center'))
 
-  sett_tab  = uicontrol(setting_tabs,'style','frame','layout','gridbag','String','Settings','backgroundcolor',[0,0.5,0])
-  macro_tab = uicontrol(macro_tabs,'style','frame','layout','gridbag','String','Macros manager')
-
+  sett_tab  = uicontrol(setting_tabs,'style','frame','layout','gridbag','String','Settings',..
+  'constraints',createConstraints('gridbag',[1,1,1,1],[1,1],'both','upper_left'))
   // for tabs: fig.children(1) is the last uicontrol added, so last tab is the first to be defined and so on
+  macro_tab = uicontrol(info_tabs,'style','frame','layout','gridbag','String','Macros manager')
   optn_tab  = uicontrol(info_tabs,'style','frame','layout','gridbag','String','Optionnal infos','scrollable',%t)
-  basic_tab = uicontrol(info_tabs,'style','frame','layout','gridbag','String','Mandatory infos','scrollable',%t)
+  basic_tab = uicontrol(info_tabs,'style','frame','layout','gridbag','String','Mandatory infos','scrollable',%t,'tag','info_basic_tag')
 
 
 
@@ -42,8 +42,6 @@ function fig_handle=pkgBuildFrame()
   pkgAddControl(basic_tab,'edit',[],'Author',[1,5])
   hdes=pkgAddControl(basic_tab,'edit',[],'Description',[1,6],[3,3],[])
   hdes.max =2
-  pkgAddControl(basic_tab,'edit','Save toolbox at','Path',[1,10],[2,1],[])
-  pkgAddControl(basic_tab,'pushbutton','Browse','Path',[4,10],[],'pkgGetPaths(''%dir'',''Select the directory to save'');')
 
   // Build the optionnal panel
   pkgAddControl(optn_tab,'edit',[],'Maintainer',[1,1])
@@ -63,22 +61,23 @@ function fig_handle=pkgBuildFrame()
   // Build the macro tab
   lst=pkgAddControl(macro_tab,'listbox','Path to the sources .sci','MacrosPath',[1,1],[1,1],[])
   lst.max =2
-  lst.tooltipstring = 'toto'
   macro_button_frame=uicontrol(macro_tab,'style','frame','layout','gridbag',..
-  'constraints',createConstraints('gridbag',[1,2,1,1],[1,0],'horizontal','lower',[0,0],[0,40]))
+  'constraints',createConstraints('gridbag',[1,2,1,1],[1,0],'horizontal','lower',[0,0],[-1,40]))
   btn=pkgAddControl(macro_button_frame,'pushbutton','Add','MacrosPath',[1,4],[],'pkgGetPaths(''*.sci'',''Select .sci files'',%t);')
   pkgAddControl(macro_button_frame,'pushbutton','Remove','MacrosPath',[2,4],[],'pkgRemoveMacros()')
   pkgAddControl(macro_button_frame,'pushbutton','Edit','MacrosPath',[3,4],[],'pkgEditMacros()')
 
   // Build the settings tab
-  pkgAddControl(sett_tab,'checkbox','Force overwrite','OverWrite',[1,1])
-  pkgAddControl(sett_tab,'checkbox','Open toolbox','OpenToolbox',[1,2])
-
+  pkgAddControl(sett_tab,'checkbox','Force overwrite','OverWrite',[1,1],[4,1])
+  pkgAddControl(sett_tab,'checkbox','Open toolbox when created','OpenToolbox',[1,2],[4,1])
+  pkgAddControl(sett_tab,'edit','Save toolbox at','Path',[1,3],[2,1])
+  pkgAddControl(sett_tab,'pushbutton','Browse','Path',[4,3],[],'pkgGetPaths(''%dir'',''Select the directory to save'');')
+  
   // button of the bottom frame
   pkgAddControl(bottom_frame,'pushbutton','Generate',[],[2,1],[2,1],'pkgSave();pkgCreate()')
-  h=pkgAddControl(bottom_frame,'pushbutton','Install',[],[4,1],[],'pkgInstall()')
-  h.tag='install_tag'
-  h.enable='off'
+  //h=pkgAddControl(bottom_frame,'pushbutton','Install',[],[4,1],[],'pkgInstall()')
+//  h.tag='install_tag'
+//  h.enable='off'
 
   //info=pkgAddControl(bottom_frame,'text',' ','infobar',[1,2],[5,1],'')
   //info.horizontalalignment='center'
@@ -150,10 +149,9 @@ function uicontrol_handle=pkgAddControl(frame_handle,style,text,tag,uipos,uisize
     preferredsize = [-1,20]
     tag =''
   case 'checkbox'
-    backgroundcolor = [0.7,0.2,0.2]
     fill = 'horizontal'
-    weight = [0,0]
-    anchor = 'lower'
+    weight = [0,1]
+    anchor = 'upper_left'
   end
 
   uicontrol_handle=uicontrol(frame_handle,..

@@ -21,7 +21,7 @@ function value=pkgInitData(key)
   ]
   data.Mail = ''
   data.HelpLang = 'fr_FR'
-  data.Path = TMPDIR+filesep()+data.Toolbox
+  data.Path = TMPDIR
   data.MacrosPath=''
   value = data(key)
 endfunction
